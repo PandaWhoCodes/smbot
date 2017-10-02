@@ -144,35 +144,35 @@
     "sentence": "Give me some python meetups in chennai"
   },
   {
-    "class": "get_news",
+    "class": "get_blogs",
     "sentence": "and a few python blogs"
   },
   {
-    "class": "get_news",
+    "class": "get_blogs",
     "sentence": "What are some of the popular blogs for Python?"
   },
   {
-    "class": "get_news",
+    "class": "get_blogs",
     "sentence": "give me some good python blogs?"
   },
   {
-    "class": "get_news",
+    "class": "get_blogs",
     "sentence": "Give me some blogs on python"
   },
   {
-    "class": "get_news",
+    "class": "get_blogs",
     "sentence": "suggest me a few python blogs"
   },
   {
-    "class": "get_news",
+    "class": "get_blogs",
     "sentence": "give me blogs about python"
   },
   {
-    "class": "get_news",
+    "class": "get_blogs",
     "sentence": "Give some cool python blogs"
   },
   {
-    "class": "get_news",
+    "class": "get_blogs",
     "sentence": "Can you give me some good blogs for learning java?"
   },
   {

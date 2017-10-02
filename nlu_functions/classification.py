@@ -13,7 +13,7 @@ class classification():
 
     def __init__(self):
         training_data = []
-        with open("functions/trainer.json", "r") as f:
+        with open("nlu_functions/trainer.json", "r") as f:
             data = f.read()
         Traindata = json.loads(data)
         training_data.extend(Traindata)

@@ -1,5 +1,5 @@
 import random
-from functions.entity import extractor
+from nlu_functions.entity import extractor
 import requests
 from geopy.geocoders import Nominatim
 import json
@@ -30,13 +30,13 @@ def purpose(query):
     entity = extractor(query)
     entityList = entity.extract()
     # Got th entity list
-    with open("functions/techTerms.json", "r") as f:
+    with open("nlu_functions/techTerms.json", "r") as f:
         techTerms = f.read()
     terms = json.loads(techTerms)
     for entity in entityList:
         if entity in terms:
             msg = msg + "about " + str(entity)
-            msg = msg + "\n1.Give you blogs\n2.Give you latest job posting\n3.Give you latest event on it"
+            msg = msg + "\n1.Give you python blogs\n2.Give you latest job posting in any location\n3.Give you latest events using meetup API"
             return msg
     msg = msg + "\n1.Give you blogs\n2.Give you latest job posting\n3.Give you latest events in your city"
     return msg
@@ -50,7 +50,7 @@ def formatString(d):
     """
     msg = ""
     for item in d:
-        msg = msg + '<a href="' + item + '">' + d[item] + '</a></br>'
+        msg = msg + '<a href="' + item + '" target="_blank">' + d[item] + '</a></br>'
     return msg
 
 
@@ -68,7 +68,7 @@ def get_blogs(query):
     d = {}
     msg = ""
     if "python" in entityList:
-        with open("functions/blogs.json", "r") as f:
+        with open("nlu_functions/blogs.json", "r") as f:
             raw_blog = f.read()
             blogs = json.loads(raw_blog)
             msg = msg + "We found five blogs that suit your query</br>"
@@ -93,7 +93,7 @@ def get_languages(entityList):
     :param entityList: The list of entities
     :return: The first tech term found in the json file
     """
-    with open("functions/techTerms.json", "r") as f:
+    with open("nlu_functions/techTerms.json", "r") as f:
         techTerms = f.read()
     terms = json.loads(techTerms)
     for entity in entityList:
@@ -108,9 +108,9 @@ def get_jobs(entityList):
     :param entityList: List of entities
     :return: List of jobs with their links
     """
-    with open("functions/techTerms.json", "r") as f:
+    with open("nlu_functions/techTerms.json", "r") as f:
         techTerms = f.read()
-    with open("functions/cities.json", "r") as f:
+    with open("nlu_functions/cities.json", "r") as f:
         raw_cities = f.read()
     cities = set(json.loads(raw_cities))
     city = ""
@@ -126,7 +126,7 @@ def get_jobs(entityList):
             else:
                 url = "https://www.shine.com/job-search/" + entity + "-jobs-" + "in-" + city
             r = requests.get(url)
-            # print(url)
+            print(url)
             # getting the page content
             soup = BeautifulSoup(r.text, 'lxml')
             # extracting usefull data
@@ -178,7 +178,7 @@ def get_city(entityList):
     :param entityList: entity list
     :return: The Indian city that exists in cities.json
     """
-    with open("functions/cities.json", "r") as f:
+    with open("nlu_functions/cities.json", "r") as f:
         city = set(json.loads(f.read()))
     for entity in entityList:
         if entity.title() in city:
@@ -194,6 +194,7 @@ def event_request(query):
     """
     entity = extractor(query)
     entityList = entity.extract()
+    # print(entityList)
     language = get_languages(entityList)
     place = get_city(entityList)
     if place != "":
