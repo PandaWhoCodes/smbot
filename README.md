@@ -11,5 +11,5 @@
 (or)
 You can run `nltk.downloader()` and install just the english corpora
 
-## Run  
+## Run
 `python3 app.py`

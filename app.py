@@ -1,7 +1,7 @@
 from flask import Flask
 from flask import render_template, jsonify, request
 from nlu_functions import classification, entity
-from nlu_functions.intentHandler import *
+from nlu_functions.intent_handler import *
 
 app = Flask(__name__)
 
@@ -33,7 +33,7 @@ def actions(query, intent, score):
             response_text = purpose(query)
         elif intent == "module" and len(query.split()) > 1:
             response_text = "The module part is still under progress"
-        elif intent == "event-request" and len(query.split()) > 1 and score > 0.5333333333333333:
+        elif intent == "event-request" and len(query.split()) > 1:
             response_text = event_request(query)
         elif intent == "stop":
             response_text = "See you soon"

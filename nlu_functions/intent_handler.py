@@ -30,9 +30,9 @@ def purpose(query):
     entity = extractor(query)
     entityList = entity.extract()
     # Got th entity list
-    with open("nlu_functions/techTerms.json", "r") as f:
-        techTerms = f.read()
-    terms = json.loads(techTerms)
+    with open("nlu_functions/tech_terms.json", "r") as f:
+        tech_terms = f.read()
+    terms = json.loads(tech_terms)
     for entity in entityList:
         if entity in terms:
             msg = msg + "about " + str(entity)
@@ -93,9 +93,9 @@ def get_languages(entityList):
     :param entityList: The list of entities
     :return: The first tech term found in the json file
     """
-    with open("nlu_functions/techTerms.json", "r") as f:
-        techTerms = f.read()
-    terms = json.loads(techTerms)
+    with open("nlu_functions/tech_terms.json", "r") as f:
+        tech_terms = f.read()
+    terms = json.loads(tech_terms)
     for entity in entityList:
         if entity in terms:
             return entity
@@ -108,13 +108,13 @@ def get_jobs(entityList):
     :param entityList: List of entities
     :return: List of jobs with their links
     """
-    with open("nlu_functions/techTerms.json", "r") as f:
-        techTerms = f.read()
+    with open("nlu_functions/tech_terms.json", "r") as f:
+        tech_terms = f.read()
     with open("nlu_functions/cities.json", "r") as f:
         raw_cities = f.read()
     cities = set(json.loads(raw_cities))
     city = ""
-    terms = json.loads(techTerms)
+    terms = json.loads(tech_terms)
     jobList = {}
     for entity in entityList:
         if entity.title() in cities:
@@ -194,7 +194,7 @@ def event_request(query):
     """
     entity = extractor(query)
     entityList = entity.extract()
-    # print(entityList)
+    print(entityList)
     language = get_languages(entityList)
     place = get_city(entityList)
     if place != "":
