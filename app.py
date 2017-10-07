@@ -1,6 +1,5 @@
 from flask import Flask
 from flask import render_template, jsonify, request
-from nlu_functions import classification, entity
 from nlu_functions.intent_handler import *
 from nlu_functions.intent import intent_mapper, intents,stopwords
 # from nltk.corpus import stopwords

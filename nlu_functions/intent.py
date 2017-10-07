@@ -24,6 +24,7 @@ intent_mapper = {
     "meetups": "event-request",
     "do": "general",
     "function": "general",
+    "functions": "general",
     "purpose": "general",
 
 }
