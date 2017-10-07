@@ -1,5 +1,5 @@
 import random
-from nlu_functions.entity import extractor
+from nlu_functions.entity import extract_entity_names
 import requests
 from geopy.geocoders import Nominatim
 import json
@@ -27,8 +27,7 @@ def purpose(query):
     """
     msg = "Hi, I can give you the following information "
     # Created object for the entity extractor
-    entity = extractor(query)
-    entityList = entity.extract()
+    entityList = extract_entity_names(query)
     # Got th entity list
     with open("nlu_functions/tech_terms.json", "r") as f:
         tech_terms = f.read()
@@ -60,30 +59,27 @@ def get_blogs(query):
     :param query: The queried sentence
     :return: formatted sentence
     """
-    query = query.split()
-    query[len(query) - 1] = query[len(query) - 1].title()
-    query = " ".join(query)
-    entity = extractor(query)
-    entityList = entity.extract()
+    # query = query.split()
+    # query[len(query) - 1] = query[len(query) - 1].title()
+    # query = " ".join(query)
+    entityList = extract_entity_names(query)
     d = {}
     msg = ""
-    if "python" in entityList:
-        with open("nlu_functions/blogs.json", "r") as f:
-            raw_blog = f.read()
-            blogs = json.loads(raw_blog)
-            msg = msg + "We found five blogs that suit your query</br>"
-            count = 0
-            # taking random 5 from the dictionary
-            keys = random.sample(list(blogs.keys()), 5)
-            for item in keys:
-                count = count + 1
-                d[item] = blogs[item]
-                if count == 5:
-                    break
-            msg = msg + formatString(d)
-    else:
-        if len(entityList) > 0:
-            msg = "Sorry we do not have a DB for " + ",".join(entityList)
+    # if "python" in entityList:
+    with open("nlu_functions/blogs.json", "r") as f:
+        raw_blog = f.read()
+        blogs = json.loads(raw_blog)
+        msg = msg + "We found five blogs that suit your query</br>"
+        count = 0
+        # taking random 5 from the dictionary
+        keys = random.sample(list(blogs.keys()), 5)
+        for item in keys:
+            count = count + 1
+            d[item] = blogs[item]
+            if count == 5:
+                break
+        msg = msg + formatString(d)
+
     return msg
 
 
@@ -148,8 +144,9 @@ def job(query):
     :param query: User requested query
     :return: formatted message with just 5 inputs
     """
-    entity = extractor(query)
-    entityList = entity.extract()
+    entityList = extract_entity_names(query)
+    if len(entityList) < 2:
+        return "Kindly add a job parameter"
     jobs = get_jobs(entityList)
     msg = ""
     d = {}
@@ -164,12 +161,16 @@ def job(query):
     elif len(jobs) == 0:
         msg = "Sorry couldn't find a job for you :("
     else:
-        msg = msg + "We found" + str(len(jobs)) + " links that match your query</br>"
+        msg = msg + "We found " + str(len(jobs)) + " links that match your query</br>"
         for item in jobs.keys():
             d[item] = jobs[item]
         msg = msg + formatString(d)
     print(msg)
     return msg
+
+
+def stop(query):
+    return "See you soon"
 
 
 def get_city(entityList):
@@ -192,9 +193,10 @@ def event_request(query):
     :param query: The input stirng
     :return: Formatted html string of 5 randomly selected meetup's
     """
-    entity = extractor(query)
-    entityList = entity.extract()
-    print(entityList)
+    entityList = extract_entity_names(query)
+    # print(entityList)
+    if len(entityList) == 0:
+        return "Sorry! I didn't understand!"
     language = get_languages(entityList)
     place = get_city(entityList)
     if place != "":
@@ -225,7 +227,7 @@ def event_request(query):
             for events in random.sample(meetups, 5):
                 d[events['link']] = events['name']
         else:
-            msg = msg + "We found" + str(len(meetups)) + " links that match your query</br>"
+            msg = msg + "We found " + str(len(meetups)) + " links that match your query</br>"
             for events in meetups:
                 d[events['link']] = events['name']
         msg = msg + formatString(d)

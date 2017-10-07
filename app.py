@@ -2,6 +2,8 @@ from flask import Flask
 from flask import render_template, jsonify, request
 from nlu_functions import classification, entity
 from nlu_functions.intent_handler import *
+from nlu_functions.intent import intent_mapper, intents,stopwords
+# from nltk.corpus import stopwords
 
 app = Flask(__name__)
 
@@ -14,32 +16,22 @@ def index_loader():
     return render_template("home.html")
 
 
-def actions(query, intent, score):
-    if "job" in query:
-        intent = "jobs"
-    elif "blog" in query:
-        intent = "get_blogs"
-    elif "event" in query or "meetup" in query:
-        intent = "event-request"
+def actions(query):
+    words = query.split()
+    intent = ""
+    for word in words:
+        if word not in stopwords:
+            try:
+                intent = intent_mapper[word.lower()]
+            except:
+                pass
     response_text = ""
-    if type(intent) != "NoneType":
-        if intent == "intro" or intent == "greet":
-            response_text = hello(query)
-        elif intent == "get_blogs" and len(query.split()) > 1 and score > 0.1:
-            response_text = get_blogs(query)
-        elif intent == "jobs" and len(query.split()) > 1 and score > 0.1:
-            response_text = job(query)
-        elif intent == "general" and len(query.split()) > 1:
-            response_text = purpose(query)
-        elif intent == "module" and len(query.split()) > 1:
-            response_text = "The module part is still under progress"
-        elif intent == "event-request" and len(query.split()) > 1:
-            response_text = event_request(query)
-        elif intent == "stop":
-            response_text = "See you soon"
-        if response_text == "":
-            response_text = "Sorry, I'm not trained to answer that question."
-        return response_text
+    try:
+        response_text = eval(intents[intent])
+    except Exception as e:
+        print(e)
+        response_text = "Sorry, I'm not trained to answer that question."
+    return response_text
 
 
 @app.route('/chat', methods=["POST"])
@@ -49,13 +41,8 @@ def chat():
     """
     try:
         query = request.form["text"]
-        # Extracting the post request - TEXT
-        clf = classification.classification()
-        # Creating a classification object
-        intent, score = clf.classify(query)
-        print("Intent:" + str(intent) + "  score:" + str(score))
-        response_text = actions(query, intent, score)
-        # The response text which is sent back to the front end
+        response_text = actions(query)
+        # The response tex  t which is sent back to the front end
         # Log the text
         with open("log.txt", "a") as f:
             f.write("\n")
